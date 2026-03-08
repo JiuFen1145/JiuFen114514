@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>JiuFen带你练习 - 登录</title>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{background:#111;color:#fff;font-family:system-ui,sans-serif;display:grid;place-items:center;height:100vh}
+  .auth-box{background:#222;padding:2rem;border-radius:12px;width:90%;max-width:360px}
+  .auth-box h2{text-align:center;margin-bottom:1.5rem}
+  input{width:100%;padding:0.8rem;margin:0.6rem 0;border:none;border-radius:6px;background:#333;color:#fff}
+  button{width:100%;padding:0.8rem;margin:0.6rem 0;border:none;border-radius:6px;background:#e63946;color:#fff;cursor:pointer}
+  .divider{text-align:center;color:#999;margin:1rem 0}
+  #game-container{display:none}
+</style>
+<script type="module">
+  // Import the functions you need from the SDKs you need
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-app.js";
+  import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signInWithPopup, GoogleAuthProvider, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-auth.js";
+
+  // Your web app's Firebase configuration
+  const firebaseConfig = {
+    apiKey: "AIzaSyAfAfwLkZh422Pxk0harqt39NK7gYciPhc",
+    authDomain: "jiufengame-be97d.firebaseapp.com",
+    projectId: "jiufengame-be97d",
+    storageBucket: "jiufengame-be97d.firebasestorage.app",
+    messagingSenderId: "220632412755",
+    appId: "1:220632412755:web:207c3f8d7d471c12e48ca6"
+  };
+
+  // Initialize Firebase
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+
+  // 监听登录状态变化
+  onAuthStateChanged(auth, (user) => {
+    if (user) {
+      // 用户已登录，显示游戏
+      document.getElementById('auth-box').style.display = 'none';
+      document.getElementById('game-container').style.display = 'block';
+    } else {
+      // 用户未登录，显示登录框
+      document.getElementById('auth-box').style.display = 'block';
+      document.getElementById('game-container').style.display = 'none';
+    }
+  });
+
+  // 邮箱登录
+  window.loginWithEmail = async function() {
+    const email = document.getElementById('email').value;
+    const password = document.getElementById('password').value;
+    try {
+      await signInWithEmailAndPassword(auth, email, password);
+    } catch (e) {
+      alert('登录失败：' + e.message);
+    }
+  }
+
+  // 邮箱注册
+  window.registerWithEmail = async function() {
+    const email = document.getElementById('email').value;
+    const password = document.getElementById('password').value;
+    try {
+      await createUserWithEmailAndPassword(auth, email, password);
+      alert('注册成功！请登录');
+    } catch (e) {
+      alert('注册失败：' + e.message);
+    }
+  }
+
+  // Google 登录
+  window.loginWithGoogle = async function() {
+    const provider = new GoogleAuthProvider();
+    try {
+      await signInWithPopup(auth, provider);
+    } catch (e) {
+      alert('Google 登录失败：' + e.message);
+    }
+  }
+
+  // 游戏模式（可替换为你原来的游戏逻辑）
+  window.startNormal = function() {
+    alert('普通模式开始！');
+    // 在这里添加你的游戏代码
+  }
+
+  window.startEndless = function() {
+    alert('无尽模式开始！');
+    // 在这里添加你的游戏代码
+  }
+</script>
+</head>
+<body>
+<div id="auth-box" class="auth-box">
+  <h2>登录 / 注册</h2>
+  <input type="email" id="email" placeholder="邮箱">
+  <input type="password" id="password" placeholder="密码（至少6位）">
+  <button onclick="loginWithEmail()">邮箱登录</button>
+  <button onclick="registerWithEmail()">邮箱注册</button>
+  <div class="divider">或</div>
+  <button onclick="loginWithGoogle()" style="background:#4285F4">使用 Google 账号登录</button>
+</div>
+
+<div id="game-container">
+  <div style="text-align:center;padding:2rem">
+    <h1>JiuFen带你练习</h1>
+    <button onclick="startNormal()" style="margin:1rem;padding:0.8rem 2rem">普通模式 (30秒)</button>
+    <button onclick="startEndless()" style="margin:1rem;padding:0.8rem 2rem">无尽模式</button>
+  </div>
+</div>
+</body>
+</html>
